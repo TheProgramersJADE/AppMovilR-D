@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/catalog_service.dart';
+import '../services/auth_service.dart';
+import 'login_screen.dart';
+import '../widgets/product_card.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -10,58 +13,57 @@ class CatalogScreen extends StatefulWidget {
 
 class _CatalogScreenState extends State<CatalogScreen> {
   final CatalogService _catalogService = CatalogService();
-  late Future<List<dynamic>> _catalogoFuture;
+  final AuthService _authService = AuthService();
+  List<dynamic> products = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _catalogoFuture = _catalogService.getCatalogo();
+    _loadCatalog();
+  }
+
+  void _loadCatalog() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final data = await _catalogService.getProducts();
+
+    setState(() {
+      products = data;
+      isLoading = false;
+    });
+  }
+
+  void _logout() async {
+    await _authService.logout();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catálogo de productos'),
+        title: const Text("Catálogo"),
+        actions: [
+          IconButton(onPressed: _logout, icon: const Icon(Icons.logout)),
+        ],
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: _catalogoFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No hay productos disponibles'));
-          }
-
-          final catalogo = snapshot.data!;
-          return ListView.builder(
-            itemCount: catalogo.length,
-            itemBuilder: (context, index) {
-              final producto = catalogo[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: ListTile(
-                  title: Text(producto['nombre'] ?? 'Sin nombre'),
-                  subtitle: Text(producto['descripcion'] ?? ''),
-                  trailing: Text('Precio: \$${producto['precio'] ?? ''}'),
-                  onTap: () {
-                    // Aquí podrías ir al detalle del producto
-                    Navigator.pushNamed(
-                      context,
-                      '/catalogo-detalle',
-                      arguments: producto['id'],
-                    );
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : products.isEmpty
+          ? const Center(child: Text("No hay productos disponibles"))
+          : ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final p = products[index];
+                return ProductCard(product: p);
+              },
+            ),
     );
   }
 }
