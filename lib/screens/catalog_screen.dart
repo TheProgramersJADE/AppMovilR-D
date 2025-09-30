@@ -89,7 +89,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
           : products.isEmpty
           ? const Center(
               child: Text(
-                "No hay productos disponibles",
+                "No hay productos disponibles!",
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
             )
