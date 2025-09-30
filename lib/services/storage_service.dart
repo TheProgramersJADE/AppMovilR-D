@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:html' as html;
+import 'package:universal_html/html.dart' as html;
 
 class StorageService {
   final _storage = const FlutterSecureStorage();
