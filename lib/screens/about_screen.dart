@@ -54,7 +54,7 @@ class AboutScreen extends StatefulWidget {
 
 class _AboutScreenState extends State<AboutScreen> {
   final AuthService _authService = AuthService();
-  String usuario = "d1"; // por defecto
+  String usuario = "A nuestra aplicación"; // por defecto
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _AboutScreenState extends State<AboutScreen> {
     final token = await _authService.getToken();
     if (token != null && token.isNotEmpty) {
       setState(() {
-        usuario = "d1"; // O el username real si lo tienes en el token
+        usuario = "A nuestra aplicación"; // O el username real si lo tienes en el token
       });
     }
   }
@@ -105,7 +105,7 @@ class _AboutScreenState extends State<AboutScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "¡Bienvenido, $usuario! 💜",
+                  "¡Bienvenido, $usuario! ",
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 20,
@@ -117,7 +117,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 const Text(
                   "Somos una empresa dedicada a ofrecer los mejores productos "
                   "para nuestros clientes, garantizando calidad, confianza y un servicio "
-                  "excelente. 💜\n\nNuestra misión es facilitar la vida de las personas "
+                  "excelente. \n\nNuestra misión es facilitar la vida de las personas "
                   "con soluciones accesibles y modernas.",
                   style: TextStyle(
                     color: Colors.white70,
